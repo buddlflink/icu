@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ICU</string>
+    <string name="locationStatic">device gps location</string>
+    <string name="action_settings">Settings</string>
+    <string name="buttonSendSMS">Request location</string>
+    <string name="locationText">not available\n</string>
+    <string name="receivedStatic">received SMS content</string>
+
+</resources>
