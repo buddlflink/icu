@@ -1,3 +1,9 @@
+/**
+ * Singleton class to receive SMS messages
+ * 
+ */
+
+
 package matze.gps.icu;
 
 import matze.gps.icu.control.ICUSMSManager;
@@ -44,13 +50,13 @@ public class SMSReceiver extends BroadcastReceiver {
         }
     }
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public static SMSReceiver getInstance() {
 		if (null == instance)
 			instance = new SMSReceiver();
-
 		return instance;
 	}
-
-	
-
 }

@@ -1,3 +1,7 @@
+/**
+ * SMS manager singleton class.
+ */
+
 package matze.gps.icu.control;
 
 import matze.gps.icu.GPSLocationListener;
@@ -22,16 +26,20 @@ public class ICUSMSManager {
 	}
 	
 	
-
+	/**
+	 * 
+	 * @return
+	 */
 	public static ICUSMSManager getInstance() {
-
 		if (null == instance)
 			instance = new ICUSMSManager();
 		return instance;
 	}
 
-	
-
+	/**
+	 * Callback from SMSReiver
+	 * @param receivedSMS
+	 */
 	public void SMSReceived(ICUSMS receivedSMS) {
 		TextView tv=((TextView) mainActivity.findViewById(R.id.labelReceivedLocation));
 		
@@ -39,47 +47,30 @@ public class ICUSMSManager {
 			tv.setText("invalid message");
 			return;
 		}
-			
 		
 		String message = "";
-//		String message = SMSReceiver.getInstance().getMessage();
-		
-//		String event = parse
 		
 		switch (receivedSMS.getRequest()) {
+		// Respond to request
 		case Requests.LOCATION_REQUEST:
 			ICULocation location = gpsLocationListener.getLastValidLocation();
 			ICUSMS response = new ICUSMS(PhoneNumberManager.getTargetPhonenumber(), Requests.LOCATION, location);
 			message = receivedSMS.getRequest();
 			response.send();
 			break;
-
+		// Received response
 		case Requests.LOCATION:
 			ICULocation loc = receivedSMS.getLocation();
-			
 			message = receivedSMS.getRequest() + "\nlong " + loc.getLongitude() + "\nlati " + loc.getLatitude();
-			
-			Log.i("debug", message);
-
 			break;
 		default:
 			break;
 		}
-		
-		
-		
         tv.setText(message);
 	}
 	
 	
-	private String getSMSRequest(String message){
-		
-		
-		
-		
-		return "";
-	}
-
+	
 	
 	
 	

@@ -18,39 +18,33 @@ public class GPSLocationListener implements LocationListener {
 	
 	
 	public GPSLocationListener(){
-		
 		locations = new Vector<>();
 		lastValidLocation = new ICULocation();
-		
 	}
 	
+	/**
+	 * 
+	 * @param mainActivity
+	 */
 	public void setMainActivity(MainActivity mainActivity) {
 		this.mainActivity = mainActivity;
 	}
 	
-	
 	@Override
 	public void onLocationChanged(Location loc)
 	{
-//		loc.getLatitude();
-//		loc.getLongitude();
-		
+		//@todo: add validation of position
 		lastValidLocation = new ICULocation(Double.toString(loc.getLatitude()), Double.toString(loc.getLongitude()));
-		
 		locations.add(lastValidLocation);
 		
-		// Toast.makeText(getApplicationContext(), Text,
-		// Toast.LENGTH_SHORT).show();
-
 		((TextView) this.mainActivity.findViewById(R.id.labelLocation)).setText("long " + lastValidLocation.getLongitude() + "\nlati " + lastValidLocation.getLatitude());
 
 	}
 
-	
-//	public ICULocation getLocation() {
-//		return ;
-//	}
-	
+	/**
+	 * Return the last known location
+	 * @return
+	 */
 	public ICULocation getLastValidLocation(){
 		
 		return lastValidLocation;
@@ -60,30 +54,21 @@ public class GPSLocationListener implements LocationListener {
 	public void onProviderDisabled(String provider)
 
 	{
-
 		Toast.makeText(this.mainActivity.getApplicationContext(), "GPS Disabled",
-
 		Toast.LENGTH_SHORT).show();
-
 	}
 
 	@Override
 	public void onProviderEnabled(String provider)
 
 	{
-
 		Toast.makeText(this.mainActivity.getApplicationContext(),
-
 		"GPS Enabled", Toast.LENGTH_SHORT).show();
-
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras)
-
-	{
-
-	}
+	{}
 
 	
 }

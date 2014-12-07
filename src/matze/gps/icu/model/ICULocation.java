@@ -6,16 +6,13 @@ public class ICULocation {
 	private String latitude;
 	
 	public ICULocation() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	public ICULocation(String latitude, String longitude){
-		
 		this.latitude = latitude;
 		this.longitude = longitude;
 	}
-	
-	
+		
 	public void setLatitude(String latitude) {
 		this.latitude = latitude;
 	}

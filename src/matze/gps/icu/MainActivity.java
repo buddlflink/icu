@@ -53,7 +53,6 @@ public class MainActivity extends Activity {
 				icuSMS.send();
 			}
 		});
-
 	}
 
 

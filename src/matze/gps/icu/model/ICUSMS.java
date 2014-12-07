@@ -1,6 +1,5 @@
 package matze.gps.icu.model;
 
-import android.location.Location;
 import android.telephony.SmsManager;
 
 public class ICUSMS {
@@ -8,21 +7,13 @@ public class ICUSMS {
 	private String request;
 	private String receivedFrom;
 	private String sendTo;
-	private String receiver;
 	private ICULocation location;
 	private static final String div = " ";
 
-	// Aufbau einer SMS:
-	// REQ
-	// LATI
-	// LONG
+	// Aufbau einer SMS: REQ div [LATI div LONG div]
 
 	public void setLocation(ICULocation location) {
 		this.location = location;
-	}
-
-	public void setReceiver(String receiver) {
-		this.receiver = receiver;
 	}
 
 	public void setRequest(String request) {
@@ -41,10 +32,6 @@ public class ICUSMS {
 		return location;
 	}
 
-	public String getReceiver() {
-		return receiver;
-	}
-
 	public String getRequest() {
 		return request;
 	}
@@ -58,7 +45,7 @@ public class ICUSMS {
 	}
 
 	/**
-	 * Get SMS data
+	 * Parse SMS content
 	 * @param body
 	 * @param sender
 	 * @return
@@ -74,18 +61,18 @@ public class ICUSMS {
 
 		switch (request) {
 		case Requests.LOCATION_REQUEST:
-
 			break;
-
 		case Requests.LOCATION:
 			if (null != frac[1] && null != frac[2])
 				location = new ICULocation(frac[1], frac[2]);
 			break;
 		}
-
 		return this;
 	}
 
+	/**
+	 * Check SMS and send SMS
+	 */
 	public void send() {
 
 		if (null == request || null == sendTo)
@@ -101,20 +88,23 @@ public class ICUSMS {
 			message = message.append(location.getLongitude());
 			message = message.append(div);
 		}
-
+		
+		// send
 		SmsManager sm = SmsManager.getDefault();
 		sm.sendTextMessage(sendTo, null, message.toString(), null, null);
 	}
 
-	public ICUSMS() {
-	}
-
+	
+	/**
+	 * 
+	 * @param sendTo Target number
+	 * @param request Request type
+	 * @param location Optionally
+	 */
 	public ICUSMS(String sendTo, String request, ICULocation location) {
-
 		this.request = request;
 		this.location = location;
 		this.sendTo = sendTo;
-
 	}
 
 }
