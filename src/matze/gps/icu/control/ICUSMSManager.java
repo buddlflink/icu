@@ -10,7 +10,6 @@ import matze.gps.icu.R;
 import matze.gps.icu.model.ICULocation;
 import matze.gps.icu.model.ICUSMS;
 import matze.gps.icu.model.Requests;
-import android.util.Log;
 import android.widget.TextView;
 
 
@@ -41,7 +40,7 @@ public class ICUSMSManager {
 	 * @param receivedSMS
 	 */
 	public void SMSReceived(ICUSMS receivedSMS) {
-		TextView tv=((TextView) mainActivity.findViewById(R.id.labelReceivedLocation));
+		TextView tv=((TextView) mainActivity.findViewById(R.id.textViewRemoteCoord));
 		
 		if(null == receivedSMS.getRequest()){
 			tv.setText("invalid message");

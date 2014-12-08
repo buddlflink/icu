@@ -37,7 +37,7 @@ public class GPSLocationListener implements LocationListener {
 		lastValidLocation = new ICULocation(Double.toString(loc.getLatitude()), Double.toString(loc.getLongitude()));
 		locations.add(lastValidLocation);
 		
-		((TextView) this.mainActivity.findViewById(R.id.labelLocation)).setText("long " + lastValidLocation.getLongitude() + "\nlati " + lastValidLocation.getLatitude());
+		((TextView) this.mainActivity.findViewById(R.id.textViewLocalCoord)).setText("long " + lastValidLocation.getLongitude() + "\nlati " + lastValidLocation.getLatitude());
 
 	}
 

@@ -106,5 +106,8 @@ public class ICUSMS {
 		this.location = location;
 		this.sendTo = sendTo;
 	}
+	
+	public ICUSMS() {
+	}
 
 }
