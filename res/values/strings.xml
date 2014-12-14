@@ -11,5 +11,14 @@
     <string name="notAvailable">not available\n</string>
     <string name="remotePosition">remote position</string>
     <string name="requestLocation">Request location</string>
+    <string name="AuthorizedNumbers">Authorized Numbers</string>
+    <string name="AddNumber">Add Number</string>
+    <string name="PickNumber">Pick Number</string>
+    
+    <string name="PREFERENCES_AUT_NUMBERS">ICU_AUTHORIZED_NUMBERS</string>
+    <string name="PREFERENCES_TARGET_NUMBER">ICU_REMOTE_NUMBER</string>
+    <string name="LOCATION_REQUEST">LOCATION_REQUEST</string>
+    <string name="LOCATION">LOCATION</string>
+    <string name="buttonHide">Hide Me</string>
 
 </resources>

@@ -24,7 +24,7 @@
         </activity>
         
         <receiver
-            android:name=".SMSReceiver"
+            android:name="matze.gps.icu.control.SMSReceiver"
             android:exported="true" >
             <intent-filter android:priority="1000" >
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
@@ -40,5 +40,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+     
 
 </manifest>

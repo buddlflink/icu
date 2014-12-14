@@ -4,9 +4,8 @@
  */
 
 
-package matze.gps.icu;
+package matze.gps.icu.control;
 
-import matze.gps.icu.control.ICUSMSManager;
 import matze.gps.icu.model.ICUSMS;
 import android.content.BroadcastReceiver;
 import android.content.Context;

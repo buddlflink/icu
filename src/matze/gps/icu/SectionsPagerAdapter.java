@@ -2,6 +2,9 @@ package matze.gps.icu;
 
 import java.util.Locale;
 
+import matze.gps.icu.monitor.MainFragment;
+import matze.gps.icu.monitor.MapFragment;
+import matze.gps.icu.monitor.RemoteFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
@@ -25,26 +28,31 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 	@Override
 	public Fragment getItem(int position) {
 		Fragment f = null;
-		
-		switch(position){
-		case 0: f = MainFragment.newInstance(position + 1);
+
+		switch (position) {
+		case 0:
+			f = MainFragment.newInstance(position + 1);
 			break;
-		case 1: f = MapFragment.newInstance();
-			
-		
+		case 1:
+			f = RemoteFragment.newInstance();
+			break;
+		case 2:
+			f = MapFragment.newInstance();
+			break;
+
 		}
-		
+
 		return f;
 		// getItem is called to instantiate the fragment for the given page.
 		// Return a PlaceholderFragment (defined as a static inner class
 		// below).
-		
+
 	}
 
 	@Override
 	public int getCount() {
 		// Show 3 total pages.
-		return 2;
+		return 3;
 	}
 
 	@Override

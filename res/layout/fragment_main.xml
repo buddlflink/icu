@@ -29,6 +29,39 @@
         android:text="@string/notAvailable"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <Button
+        android:id="@+id/buttonPickNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/PickNumber" />
+
+    <TextView
+        android:id="@+id/textViewNumberStatic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Number:"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/textViewMonitorNumber"
+        android:layout_width="284dp"
+        android:layout_height="wrap_content"
+        android:text=" "
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" "
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/buttonRequestCoord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/requestLocation" />
+
     <TextView
         android:id="@+id/textViewRemoteCoordStatic"
         android:layout_width="wrap_content"
@@ -42,11 +75,5 @@
         android:layout_height="wrap_content"
         android:text="@string/notAvailable"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <Button
-        android:id="@+id/buttonRequestCoord"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/requestLocation" />
 
 </LinearLayout>

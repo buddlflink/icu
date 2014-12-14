@@ -1,5 +1,10 @@
 package matze.gps.icu.model;
 
+import matze.gps.icu.MainActivity;
+import matze.gps.icu.R;
+
+import org.osmdroid.util.GeoPoint;
+
 import android.telephony.SmsManager;
 
 public class ICUSMS {
@@ -7,12 +12,13 @@ public class ICUSMS {
 	private String request;
 	private String receivedFrom;
 	private String sendTo;
-	private ICULocation location;
+	private GeoPoint location;
 	private static final String div = " ";
 
+//	MainActivity mainActivity; 
 	// Aufbau einer SMS: REQ div [LATI div LONG div]
 
-	public void setLocation(ICULocation location) {
+	public void setLocation(GeoPoint location) {
 		this.location = location;
 	}
 
@@ -28,7 +34,7 @@ public class ICUSMS {
 		this.sendTo = sendTo;
 	}
 
-	public ICULocation getLocation() {
+	public GeoPoint getLocation() {
 		return location;
 	}
 
@@ -59,12 +65,13 @@ public class ICUSMS {
 		if (null != frac[0])
 			request = frac[0];
 
+		
 		switch (request) {
-		case Requests.LOCATION_REQUEST:
+		case   Requests.LOCATION_REQUEST:
 			break;
 		case Requests.LOCATION:
 			if (null != frac[1] && null != frac[2])
-				location = new ICULocation(frac[1], frac[2]);
+				location = new GeoPoint(Double.parseDouble(frac[1]), Double.parseDouble(frac[2]));
 			break;
 		}
 		return this;
@@ -101,13 +108,17 @@ public class ICUSMS {
 	 * @param request Request type
 	 * @param location Optionally
 	 */
-	public ICUSMS(String sendTo, String request, ICULocation location) {
+	public ICUSMS(String sendTo, String request, GeoPoint location) {
 		this.request = request;
 		this.location = location;
 		this.sendTo = sendTo;
 	}
 	
 	public ICUSMS() {
+		// TODO Auto-generated constructor stub
 	}
+	
+	
+	
 
 }
