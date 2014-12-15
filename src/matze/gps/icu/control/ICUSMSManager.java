@@ -19,7 +19,8 @@ public class ICUSMSManager {
 	private MainActivity mainActivity;
 
 	GPSLocationManager gpsLocationListener;
-
+	BatteryReveiver batteryReveiver;
+	
 	public void setMainActivity(MainActivity mainActivity) {
 		this.mainActivity = mainActivity;
 	}
@@ -48,12 +49,15 @@ public class ICUSMSManager {
 		}
 
 		String message = "";
+		
+		// Todo: Location und battery nicht hier setzen. 
 
 		switch (receivedSMS.getRequest()) {
 		// Respond to request
 		case Requests.LOCATION_REQUEST:
 			GeoPoint location = gpsLocationListener.getLastIPosition();
-			ICUSMS response = new ICUSMS(receivedSMS.getReceivedFrom(), Requests.LOCATION, location);
+			String battery = gpsLocationListener.getBattery();
+			ICUSMS response = new ICUSMS(receivedSMS.getReceivedFrom(), Requests.LOCATION, location, battery);
 			message = receivedSMS.getRequest();
 
 			if (PhoneNumberManager.getInstance().getAuthorizedNumbers().contains(receivedSMS.getReceivedFrom()) || mainActivity.isDebug())
@@ -64,6 +68,7 @@ public class ICUSMSManager {
 			GeoPoint loc = receivedSMS.getLocation();
 			message = receivedSMS.getRequest() + "\nlong " + loc.getLongitude() + "\nlati " + loc.getLatitude();
 			gpsLocationListener.addUPosition(loc);
+			gpsLocationListener.setBattery(receivedSMS.getBattery());
 			break;
 		default:
 			break;
@@ -74,5 +79,9 @@ public class ICUSMSManager {
 
 	public void setGpsLocationListener(GPSLocationManager gpsLocationListener) {
 		this.gpsLocationListener = gpsLocationListener;
+	}
+	
+	public void setBatteryReveiver(BatteryReveiver batteryReveiver) {
+		this.batteryReveiver = batteryReveiver;
 	}
 }

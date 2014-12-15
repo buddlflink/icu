@@ -34,11 +34,12 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 			f = MainFragment.newInstance(position + 1);
 			break;
 		case 1:
-			f = RemoteFragment.newInstance();
-			break;
-		case 2:
 			f = MapFragment.newInstance();
 			break;
+		case 2:
+			f = RemoteFragment.newInstance();
+			break;
+		
 
 		}
 

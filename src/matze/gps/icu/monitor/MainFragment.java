@@ -84,10 +84,11 @@ public class MainFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-		Button buttonRequest = ((Button) rootView.findViewById(R.id.buttonRequestCoord));
+		
 		Button buttonPickNumber = ((Button) rootView.findViewById(R.id.buttonPickNumber));
 		textViewNumber = (TextView) rootView.findViewById(R.id.textViewMonitorNumber);
 
+		Button buttonRequest = ((Button) rootView.findViewById(R.id.buttonRequestCoord));
 		buttonRequest.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -97,7 +98,7 @@ public class MainFragment extends Fragment {
 				// StringBuilder(textViewNumber.getText());
 
 				if (null != PhoneNumberManager.getInstance().getMonitorNumber()) {
-					ICUSMS icuSMS = new ICUSMS(PhoneNumberManager.getInstance().getMonitorNumber(), getString(R.string.LOCATION_REQUEST), null);
+					ICUSMS icuSMS = new ICUSMS(PhoneNumberManager.getInstance().getMonitorNumber(), getString(R.string.LOCATION_REQUEST), null, "");
 					
 					icuSMS.send();
 				}

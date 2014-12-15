@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import matze.gps.icu.MainActivity;
 import matze.gps.icu.R;
 import matze.gps.icu.control.GPSLocationManager;
+import matze.gps.icu.control.PhoneNumberManager;
+import matze.gps.icu.model.ICUSMS;
 import matze.gps.icu.model.Requests;
 
 import org.osmdroid.DefaultResourceProxyImpl;
@@ -30,6 +32,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 /**
@@ -43,9 +46,6 @@ public class MapFragment extends Fragment {
 	static MapFragment fragment;
 	static OverlayItem iPositionItem;
 	static OverlayItem itemUPosition;
-	
-//	static Marker iMarker;
-//	static Marker uMarker;
 	
 	Drawable iDrawable;
 	Drawable uDrawable;
@@ -68,19 +68,6 @@ public class MapFragment extends Fragment {
 		iPositionItem = new OverlayItem("I", "My position", null);
 		itemUPosition = new OverlayItem("U", "Remote position", null);
 		
-//		iMarker = new Marker(0, 0);
-//		uMarker = new Marker(0, 0);
-//		
-//		iMarker.icon(0);
-//		uMarker.icon(1);
-		
-		// Bundle args = new Bundle();
-		// args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-		// fragment.setArguments(args);
-		
-		
-		
-		
 		return fragment;
 	}
 
@@ -100,8 +87,6 @@ public class MapFragment extends Fragment {
 
 		gpsLocationListener = ((MainActivity) getActivity()).getGpsLocationListener();
 		
-		
-
 		mapView = (MapView) rootView.findViewById(R.id.map);
 		mapView.setTileSource(TileSourceFactory.MAPNIK);
 		mapView.setBuiltInZoomControls(true);
@@ -136,7 +121,22 @@ public class MapFragment extends Fragment {
 		});
 		
 		
-		
+		Button buttonRequestLocationMap = ((Button) rootView.findViewById(R.id.buttonRequestLocationMap));
+		buttonRequestLocationMap.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				// StringBuilder sb = new
+				// StringBuilder(textViewNumber.getText());
+
+				if (null != PhoneNumberManager.getInstance().getMonitorNumber()) {
+					ICUSMS icuSMS = new ICUSMS(PhoneNumberManager.getInstance().getMonitorNumber(), getString(R.string.LOCATION_REQUEST), null, "");
+					
+					icuSMS.send();
+				}
+			}
+		});
 		
 		
 		drawPositions();
@@ -182,7 +182,8 @@ public class MapFragment extends Fragment {
 		myLocationOverlay = new ItemizedIconOverlay<OverlayItem>(items, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
 			@Override
 			public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-//				Toast.makeText(mapView, 'ss', Toast.LENGTH_LONG).show();
+
+				Toast.makeText(getActivity().getApplicationContext(), "Bat: " + gpsLocationListener.getBattery() + "%", Toast.LENGTH_SHORT).show();
 				return true; // We 'handled' this event.
 			}
 

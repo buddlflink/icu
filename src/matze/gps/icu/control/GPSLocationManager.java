@@ -23,18 +23,21 @@ public class GPSLocationManager implements LocationListener {
 	Vector<GeoPoint> uPositions;
 	GeoPoint iPosition;
 	GeoPoint uPosition;
+	String uBattery;
 	private MainActivity mainActivity;
 	LocationManager locationManager;
 
 	public GPSLocationManager() {
 		iPositions = new Vector<>();
 		uPositions = new Vector<>();
+		uBattery = new String();
 	}
 
 	public GPSLocationManager(LocationManager locationManager) {
 		iPositions = new Vector<>();
 		uPositions = new Vector<>();
 		this.locationManager = locationManager;
+		uBattery = new String();
 	}
 
 	/**
@@ -91,8 +94,8 @@ public class GPSLocationManager implements LocationListener {
 		if (0 < uPositions.size())
 			return uPositions.lastElement();
 
-		if (mainActivity.isDebug())
-			return new GeoPoint(50.93, 13.333);
+//		if (mainActivity.isDebug())
+//			return new GeoPoint(50.93, 13.333);
 		// return new GeoPoint(50.932626, 13.333345);
 		return null;
 	}
@@ -123,4 +126,12 @@ public class GPSLocationManager implements LocationListener {
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 	}
 
+	
+	public void setBattery(String battery) {
+		this.uBattery = battery;
+	}
+	
+	public String getBattery() {
+		return uBattery;
+	}
 }

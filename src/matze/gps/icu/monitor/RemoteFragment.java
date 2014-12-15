@@ -27,7 +27,7 @@ public class RemoteFragment extends Fragment {
 	/**
 	 * The fragment argument representing the section number for this fragment.
 	 */
-	private static final String ARG_SECTION_NUMBER = "section_number";
+//	private static final String ARG_SECTION_NUMBER = "section_number";
 	private static RemoteFragment fragment;
 
 	LinearLayout layout;
@@ -81,7 +81,6 @@ public class RemoteFragment extends Fragment {
 			TextView newNumber = new TextView(getActivity());
 			newNumber.setText(n);
 			layout.addView(newNumber);
-			
 		}
 		
 
