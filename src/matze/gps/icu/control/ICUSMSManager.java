@@ -68,7 +68,7 @@ public class ICUSMSManager {
 			GeoPoint loc = receivedSMS.getLocation();
 			message = receivedSMS.getRequest() + "\nlong " + loc.getLongitude() + "\nlati " + loc.getLatitude();
 			gpsLocationListener.addUPosition(loc);
-			gpsLocationListener.setBattery(receivedSMS.getBattery());
+			gpsLocationListener.setUBattery(receivedSMS.getBattery());
 			break;
 		default:
 			break;

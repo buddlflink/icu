@@ -16,6 +16,7 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
@@ -75,6 +76,10 @@ public class MainActivity extends Activity {
 		smsManager.setMainActivity(this);
 		smsManager.setGpsLocationListener(gpsLocationManager);
 		smsManager.setBatteryReveiver(batteryReveiver);
+		
+		
+		
+		
 	}
 
 	@Override

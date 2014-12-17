@@ -26,6 +26,7 @@ public class GPSLocationManager implements LocationListener {
 	String uBattery;
 	private MainActivity mainActivity;
 	LocationManager locationManager;
+	private String urBattery;
 
 	public GPSLocationManager() {
 		iPositions = new Vector<>();
@@ -133,5 +134,13 @@ public class GPSLocationManager implements LocationListener {
 	
 	public String getBattery() {
 		return uBattery;
+	}
+
+	public void setUBattery(String battery) {
+		this.urBattery = battery;
+		
+	}
+	public String getUrBattery() {
+		return urBattery;
 	}
 }

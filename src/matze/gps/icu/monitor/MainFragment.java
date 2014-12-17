@@ -56,8 +56,8 @@ public class MainFragment extends Fragment {
 			// Make sure the request was successful
 			if (resultCode == -1) {
 
-				Log.i("debug", "resultCode " + resultCode);
-				Log.i("debug", "resultCode " + data.getPackage());
+//				Log.i("debug", "resultCode " + resultCode);
+//				Log.i("debug", "resultCode " + data.getPackage());
 
 				Uri contactUri = data.getData();
 
@@ -76,6 +76,7 @@ public class MainFragment extends Fragment {
 				// The Intent's data Uri identifies which contact was selected.
 
 				// Do something with the contact here (bigger example below)
+				
 			}
 		}
 	}
@@ -87,6 +88,7 @@ public class MainFragment extends Fragment {
 		
 		Button buttonPickNumber = ((Button) rootView.findViewById(R.id.buttonPickNumber));
 		textViewNumber = (TextView) rootView.findViewById(R.id.textViewMonitorNumber);
+		TextView localCoord = (TextView) rootView.findViewById(R.id.textViewLocalCoord);
 
 		Button buttonRequest = ((Button) rootView.findViewById(R.id.buttonRequestCoord));
 		buttonRequest.setOnClickListener(new OnClickListener() {
@@ -121,6 +123,9 @@ public class MainFragment extends Fragment {
 		PhoneNumberManager.getInstance().setMonitorNumber(settings.getString("monitorNumber", ""));
 		
 		textViewNumber.setText(PhoneNumberManager.getInstance().getMonitorNumber());
+		
+		
+		localCoord.setText("last known: " + ((MainActivity) getActivity()).getGpsLocationListener().getLastIPosition());
 
 		return rootView;
 	}
