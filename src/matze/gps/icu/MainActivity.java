@@ -1,11 +1,13 @@
 package matze.gps.icu;
 
-import matze.gps.icu.control.BatteryReveiver;
-import matze.gps.icu.control.GPSLocationManager;
+import java.util.Vector;
+
 import matze.gps.icu.control.ICUSMSManager;
 import matze.gps.icu.control.PhoneNumberManager;
+import matze.gps.icu.model.Observed;
 import matze.gps.icu.model.Requests;
 import matze.gps.icu.model.Requests.OperatingMode;
+import matze.gps.icu.model.Settings;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -16,12 +18,11 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
 	private OperatingMode operatingMode = Requests.OperatingMode.MONITOR;
-	private boolean debug = true;
+
 	// private final String PREFERENCES_AUT_NUMBERS = "ICU_AUTHORIZED_NUMBERS";
 	// private final String PREFERENCES_TARGET_NUMBER = "ICU_REMOTE_NUMBER";
 
@@ -32,28 +33,32 @@ public class MainActivity extends Activity {
 	 * becomes too memory intensive, it may be best to switch to a
 	 * {@link android.support.v13.app.FragmentStatePagerAdapter}.
 	 */
-	SectionsPagerAdapter sectionsPagerAdapter;
+	private SectionsPagerAdapter sectionsPagerAdapter;
 
 	/**
 	 * The {@link ViewPager} that will host the section contents.
 	 */
-	ViewPager mViewPager;
+	private ViewPager mViewPager;
+	private ICUSMSManager smsManager;
+	private LocationManager locationManager;
+	
 
-	ICUSMSManager smsManager;
-	LocationManager locationManager;
-	GPSLocationManager gpsLocationManager;
-	BatteryReveiver batteryReveiver;
-	static PhoneNumberManager phoneNumberManager;
+	private static PhoneNumberManager phoneNumberManager;
+	private Settings settings;
+	private Observed me;
+	private Vector<Observed> allObserved;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		allObserved = new Vector<Observed>();
+
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity.
 		sectionsPagerAdapter = new SectionsPagerAdapter(this, getFragmentManager());
-		
+		settings = new Settings(this);
 
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -62,24 +67,22 @@ public class MainActivity extends Activity {
 		phoneNumberManager = new PhoneNumberManager();
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-		gpsLocationManager = new GPSLocationManager(locationManager);
-		gpsLocationManager.setMainActivity(this);
+		me = new Observed(true, this, 'I');
+		
+		allObserved.add(me);
+		
 		// locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
 		// 0, 0, gpsLocationListener);
-		batteryReveiver = new BatteryReveiver(gpsLocationManager);
 
-		locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, 1000, 1, gpsLocationManager);
+		locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, 1000, 1, me);
 
-		registerReceiver(batteryReveiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+		registerReceiver(me, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
 		smsManager = ICUSMSManager.getInstance();
 		smsManager.setMainActivity(this);
-		smsManager.setGpsLocationListener(gpsLocationManager);
-		smsManager.setBatteryReveiver(batteryReveiver);
 		
-		
-		
-		
+
+
 	}
 
 	@Override
@@ -87,6 +90,14 @@ public class MainActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+
+	@Override
+	protected void onStop() {
+
+		settings.save();
+		unregisterReceiver(me);
+		super.onStop();
 	}
 
 	@Override
@@ -101,20 +112,30 @@ public class MainActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public GPSLocationManager getGpsLocationListener() {
-		return gpsLocationManager;
+	public Settings getSettings() {
+		return settings;
 	}
+
+	
 
 	public static PhoneNumberManager getPhoneNumberManager() {
 		return phoneNumberManager;
 	}
 
 	public boolean isDebug() {
-		return debug;
+		return settings.isDebug();
 	}
 
 	public OperatingMode getOperatingMode() {
 		return operatingMode;
+	}
+
+	public Vector<Observed> getAllObserved() {
+		return allObserved;
+	}
+	
+	public void addObserved(Observed o){
+		allObserved.add(o);
 	}
 
 }

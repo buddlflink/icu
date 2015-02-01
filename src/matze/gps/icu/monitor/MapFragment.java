@@ -4,14 +4,12 @@ import java.util.ArrayList;
 
 import matze.gps.icu.MainActivity;
 import matze.gps.icu.R;
-import matze.gps.icu.control.GPSLocationManager;
 import matze.gps.icu.control.PhoneNumberManager;
 import matze.gps.icu.model.ICUSMS;
-import matze.gps.icu.model.Requests;
+import matze.gps.icu.model.Observed;
 
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
-import org.osmdroid.api.Marker;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
@@ -20,18 +18,13 @@ import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.OverlayItem;
 
 import android.app.Fragment;
-import android.content.Intent;
-import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -42,13 +35,13 @@ public class MapFragment extends Fragment {
 
 	private MapController mapController;
 	private MapView mapView;
-	private GPSLocationManager gpsLocationListener;
+	
 	static MapFragment fragment;
-	static OverlayItem iPositionItem;
-	static OverlayItem itemUPosition;
+	
+//	static OverlayItem itemUPosition;
 
-	Drawable iDrawable;
-	Drawable uDrawable;
+//	Drawable iDrawable;
+//	Drawable uDrawable;
 
 	private boolean drawme = true;
 
@@ -64,8 +57,8 @@ public class MapFragment extends Fragment {
 	public static MapFragment newInstance() {
 		fragment = new MapFragment();
 		items = new ArrayList<OverlayItem>();
-		iPositionItem = new OverlayItem("I", "My position", null);
-		itemUPosition = new OverlayItem("U", "Remote position", null);
+		
+		
 
 		return fragment;
 	}
@@ -84,7 +77,7 @@ public class MapFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-		gpsLocationListener = ((MainActivity) getActivity()).getGpsLocationListener();
+		
 
 		mapView = (MapView) rootView.findViewById(R.id.map);
 		mapView.setTileSource(TileSourceFactory.MAPNIK);
@@ -92,17 +85,16 @@ public class MapFragment extends Fragment {
 		mapView.setMultiTouchControls(true);
 		mapController = (MapController) mapView.getController();
 		mapController.setZoom(16);
-		GeoPoint pos = gpsLocationListener.getLastIPosition();
+//		GeoPoint pos = gpsLocationListener.getLastIPosition();
 
-		mapController.setCenter(pos);
+//		mapController.setCenter(pos);
 
-		resourceProxy = new DefaultResourceProxyImpl(((MainActivity) getActivity()).getApplicationContext());
+//		resourceProxy = new DefaultResourceProxyImpl(((MainActivity) getActivity()).getApplicationContext());
 
-		uDrawable = getActivity().getResources().getDrawable(R.drawable.marker_u);
-		uDrawable.setBounds(0, 0, uDrawable.getIntrinsicWidth(), uDrawable.getIntrinsicHeight());
+		
 
-		iDrawable = getActivity().getResources().getDrawable(R.drawable.marker_i);
-		iDrawable.setBounds(0, 0, iDrawable.getIntrinsicWidth(), iDrawable.getIntrinsicHeight());
+//		iDrawable = getActivity().getResources().getDrawable(R.drawable.marker_i);
+//		iDrawable.setBounds(0, 0, iDrawable.getIntrinsicWidth(), iDrawable.getIntrinsicHeight());
 
 		ToggleButton buttonhideMe = (ToggleButton) rootView.findViewById(R.id.toggleButtonHideMe);
 		buttonhideMe.setChecked(true);
@@ -141,27 +133,39 @@ public class MapFragment extends Fragment {
 
 	public void drawPositions() {
 
-		GeoPoint iPosition = gpsLocationListener.getLastIPosition();
-		GeoPoint uPosition = gpsLocationListener.getLastUPosition();
+//		GeoPoint iPosition = gpsLocationListener.getLastIPosition();
+		
 
 		mapView.getOverlays().clear();
-		items.clear();
+//		items.clear();
 
-		// Draw my own position
-		if (iPosition != null && drawme) {
-			mapView.getController().setCenter(iPosition);
-			iPositionItem = new OverlayItem(iPositionItem.getTitle(), iPositionItem.getSnippet(), iPosition);
-			iPositionItem.setMarker(iDrawable);
-			items.add(iPositionItem);
+		
+		for(Observed o :  ((MainActivity)getActivity()).getAllObserved()){
+			if(null != o.getPosition() && o.isDraw() ){
+				mapView.getController().setCenter(o.getPosition());
+			}
+			
 		}
+		
+		
+		
+		
+		
+		// Draw my own position
+//		if (iPosition != null && drawme) {
+			
+//			iPositionItem = new OverlayItem(iPositionItem.getTitle(), iPositionItem.getSnippet(), iPosition);
+//			iPositionItem.setMarker(iDrawable);
+//			items.add(iPositionItem);
+//		}
 
 		// Draw remote position
-		if (uPosition != null) {
-			mapView.getController().setCenter(uPosition);
-
-			itemUPosition = new OverlayItem(itemUPosition.getTitle(), itemUPosition.getSnippet(), uPosition);
-			itemUPosition.setMarker(uDrawable);
-			items.add(itemUPosition);
+//		if (uPosition != null) {
+//			mapView.getController().setCenter(uPosition);
+//
+//			itemUPosition = new OverlayItem(itemUPosition.getTitle(), itemUPosition.getSnippet(), uPosition);
+//			itemUPosition.setMarker(uDrawable);
+//			items.add(itemUPosition);
 
 			// Drawable markerU =
 			// getResources().getDrawable(R.drawable.markerU);
@@ -174,14 +178,20 @@ public class MapFragment extends Fragment {
 			// item1.setMarker(icon1);
 			// item2.setMarker(icon2);
 
-		}
+//		}
 
 		myLocationOverlay = new ItemizedIconOverlay<OverlayItem>(items, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
 			@Override
 			public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
 
-				if (item == itemUPosition)
-					Toast.makeText(getActivity().getApplicationContext(), "Bat: " + gpsLocationListener.getUrBattery() + "% ", Toast.LENGTH_SHORT).show();
+				
+				for(Observed o: ((MainActivity)getActivity()).getAllObserved()){
+				
+					if(o.getiPositionItem() == item){
+						Toast.makeText(getActivity().getApplicationContext(), "Bat: " + o.getBattery() + " %", Toast.LENGTH_SHORT).show();
+					}
+				}
+					
 				return true; // We 'handled' this event.
 			}
 
@@ -196,4 +206,9 @@ public class MapFragment extends Fragment {
 		mapView.invalidate();
 
 	}
+	
+	public  ArrayList<OverlayItem> getItems() {
+		return items;
+	}
+	
 }

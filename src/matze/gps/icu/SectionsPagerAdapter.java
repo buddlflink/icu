@@ -4,7 +4,6 @@ import java.util.Locale;
 
 import matze.gps.icu.monitor.MainFragment;
 import matze.gps.icu.monitor.MapFragment;
-import matze.gps.icu.monitor.RemoteFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
@@ -36,9 +35,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 		case 1:
 			f = MapFragment.newInstance();
 			break;
-		case 2:
-			f = RemoteFragment.newInstance();
-			break;
+//		case 2:
+//			f = RemoteFragment.newInstance();
+//			break;
 		
 
 		}
@@ -53,7 +52,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 	@Override
 	public int getCount() {
 		// Show 3 total pages.
-		return 3;
+		return 2;
 	}
 
 	@Override

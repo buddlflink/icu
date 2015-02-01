@@ -16,9 +16,11 @@
     <string name="PickNumber">Pick Number</string>
     
     <string name="PREFERENCES_AUT_NUMBERS">ICU_AUTHORIZED_NUMBERS</string>
+    <string name="PREFERENCES">ICU_AUTHORIZED_NUMBERS</string>
     <string name="PREFERENCES_TARGET_NUMBER">ICU_REMOTE_NUMBER</string>
     <string name="LOCATION_REQUEST">LOCATION_REQUEST</string>
     <string name="LOCATION">LOCATION</string>
     <string name="buttonHide">Hide Me</string>
+    <string name="displayOn">Display ON</string>
 
 </resources>

@@ -76,4 +76,10 @@
         android:text="@string/notAvailable"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <CheckBox
+        android:id="@+id/checkBoxDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/displayOn" />
+
 </LinearLayout>
