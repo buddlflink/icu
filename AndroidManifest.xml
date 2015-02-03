@@ -8,7 +8,8 @@
 		android:label="@string/app_name" android:theme="@style/AppTheme">
 		<activity android:name="matze.gps.icu.MainActivity"
 			android:label="@string/app_name" android:configChanges="orientation"
-			android:screenOrientation="portrait">
+			android:screenOrientation="portrait"
+			>
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 
@@ -16,7 +17,7 @@
 			</intent-filter>
 		</activity>
 
-		<receiver android:name="matze.gps.icu.control.SMSReceiver"
+		<receiver android:name="matze.gps.icu.control.SMSManager"
 			android:exported="true">
 			<intent-filter android:priority="1000">
 				<action android:name="android.provider.Telephony.SMS_RECEIVED" />

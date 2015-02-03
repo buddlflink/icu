@@ -1,8 +1,5 @@
 package matze.gps.icu.model;
 
-import matze.gps.icu.MainActivity;
-import matze.gps.icu.R;
-
 import org.osmdroid.util.GeoPoint;
 
 import android.telephony.SmsManager;

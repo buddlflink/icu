@@ -33,6 +33,7 @@ public class MainFragment extends Fragment {
 	// private static final String ARG_SECTION_NUMBER = "section_number";
 	TextView textViewNumber;
 	Settings settings = null;
+	PhoneNumberManager phoneNumberManager;
 
 	/**
 	 * Returns a new instance of this fragment for the given section number.
@@ -69,17 +70,18 @@ public class MainFragment extends Fragment {
 				int column = cursor.getColumnIndex(Phone.NUMBER);
 				String number = cursor.getString(column);
 
+				
 				boolean inList = false;
-				for (Observed o : ((MainActivity) getActivity()).getAllObserved()) {
+				for (Observed o : phoneNumberManager.getAllObserved()) {
 					inList = inList || (o.getNumber().equals(number));
 				}
 
 				if (!inList) {
-					PhoneNumberManager.getInstance().setMonitorNumber(number);
+					phoneNumberManager.setMonitorNumber(number);
 					textViewNumber.setText(number);
 
 					Observed other = new Observed(false, (MainActivity) getActivity(), 'U');
-					((MainActivity) getActivity()).addObserved(other);
+					phoneNumberManager.addObserved(other);
 
 				}
 
@@ -91,6 +93,10 @@ public class MainFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+		if (null == phoneNumberManager){
+			phoneNumberManager= ((MainActivity)getActivity()).getPhoneNumberManager();
+		}
+		
 		// (MainActivity) getActivity())
 		settings = ((MainActivity) getActivity()).getSettings();
 
@@ -109,8 +115,8 @@ public class MainFragment extends Fragment {
 				// StringBuilder sb = new
 				// StringBuilder(textViewNumber.getText());
 
-				if (null != PhoneNumberManager.getInstance().getMonitorNumber()) {
-					ICUSMS icuSMS = new ICUSMS(PhoneNumberManager.getInstance().getMonitorNumber(), getString(R.string.LOCATION_REQUEST), null, "");
+				if (null != phoneNumberManager.getMonitorNumber()) {
+					ICUSMS icuSMS = new ICUSMS(phoneNumberManager.getMonitorNumber(), getString(R.string.LOCATION_REQUEST), null, "");
 
 					icuSMS.send();
 				}
@@ -141,9 +147,10 @@ public class MainFragment extends Fragment {
 
 		checkBoxDisplay.setChecked(settings.isDisplayAlwaysOn());
 
-		textViewNumber.setText(PhoneNumberManager.getInstance().getMonitorNumber());
+		textViewNumber.setText(phoneNumberManager.getMonitorNumber());
 
-		localCoord.setText("last known: " + ((MainActivity) getActivity()).getAllObserved().firstElement().getPosition());
+		
+		localCoord.setText("last known: " + phoneNumberManager.getAllObserved().firstElement().getPosition());
 
 		return rootView;
 	}

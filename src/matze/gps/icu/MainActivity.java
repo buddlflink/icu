@@ -1,9 +1,7 @@
 package matze.gps.icu;
 
-import java.util.Vector;
-
-import matze.gps.icu.control.ICUSMSManager;
 import matze.gps.icu.control.PhoneNumberManager;
+import matze.gps.icu.control.SMSManager;
 import matze.gps.icu.model.Observed;
 import matze.gps.icu.model.Requests;
 import matze.gps.icu.model.Requests.OperatingMode;
@@ -16,6 +14,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -34,52 +33,59 @@ public class MainActivity extends Activity {
 	 * {@link android.support.v13.app.FragmentStatePagerAdapter}.
 	 */
 	private SectionsPagerAdapter sectionsPagerAdapter;
+	private static MainActivity mainActivity = null;
 
 	/**
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	private ViewPager mViewPager;
-	private ICUSMSManager smsManager;
+//	private SMSManager smsManager;
 	private LocationManager locationManager;
 	
 
-	private static PhoneNumberManager phoneNumberManager;
+	private PhoneNumberManager phoneNumberManager;
 	private Settings settings;
 	private Observed me;
-	private Vector<Observed> allObserved;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		allObserved = new Vector<Observed>();
+		
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity.
 		sectionsPagerAdapter = new SectionsPagerAdapter(this, getFragmentManager());
+		phoneNumberManager = new PhoneNumberManager();
+		
 		settings = new Settings(this);
 
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(sectionsPagerAdapter);
 
-		phoneNumberManager = new PhoneNumberManager();
+		
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 		me = new Observed(true, this, 'I');
 		
-		allObserved.add(me);
+		phoneNumberManager.setMe(me);
 		
 		// locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
 		// 0, 0, gpsLocationListener);
 
-		locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, 1000, 1, me);
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, me);
 
 		registerReceiver(me, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
-		smsManager = ICUSMSManager.getInstance();
-		smsManager.setMainActivity(this);
+		mainActivity = this;
+		
+		registerReceiver(new SMSManager(),new IntentFilter("RECEIVED SMS"));
+		
+		
 		
 
 
@@ -96,7 +102,7 @@ public class MainActivity extends Activity {
 	protected void onStop() {
 
 		settings.save();
-		unregisterReceiver(me);
+//		unregisterReceiver(me);
 		super.onStop();
 	}
 
@@ -115,10 +121,12 @@ public class MainActivity extends Activity {
 	public Settings getSettings() {
 		return settings;
 	}
+	
+	
 
 	
 
-	public static PhoneNumberManager getPhoneNumberManager() {
+	public PhoneNumberManager getPhoneNumberManager() {
 		return phoneNumberManager;
 	}
 
@@ -130,12 +138,8 @@ public class MainActivity extends Activity {
 		return operatingMode;
 	}
 
-	public Vector<Observed> getAllObserved() {
-		return allObserved;
-	}
-	
-	public void addObserved(Observed o){
-		allObserved.add(o);
+	public static MainActivity getMainActivity() {
+		return mainActivity;
 	}
 
 }

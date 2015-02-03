@@ -8,7 +8,6 @@ import matze.gps.icu.monitor.MapFragment;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.OverlayItem;
-import org.osmdroid.views.overlay.OverlayItem.HotspotPlace;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -16,6 +15,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,7 +41,15 @@ public class Observed extends BroadcastReceiver implements LocationListener {
 
 		points = new ArrayList<GeoPoint>();
 		positionItem = new OverlayItem(Character.toString(icon), "", null);
-
+		
+		
+		
+		if (null != mainActivity.getSystemService(Context.LOCATION_SERVICE)
+				&& null != ((LocationManager) mainActivity.getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.GPS_PROVIDER)){
+			position =  new GeoPoint(((LocationManager) mainActivity.getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.GPS_PROVIDER));
+			points.add(position);
+		}
+			
 	}
 
 	public String getBattery() {
@@ -139,6 +147,10 @@ public class Observed extends BroadcastReceiver implements LocationListener {
 	
 	public void setNumber(String number) {
 		this.number = number;
+	}
+	
+	public boolean isMe() {
+		return me;
 	}
 	
 }

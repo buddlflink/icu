@@ -1,39 +1,36 @@
 package matze.gps.icu.control;
 
-import java.util.ArrayList;
+import java.util.Vector;
+
+import matze.gps.icu.model.Observed;
 
 public class PhoneNumberManager {
 	
 //	MainActivity mainActivity;
+	private Observed me;
+	private Vector<Observed> allObserved;
 
-//	private static final String phonenumber = "015755902299";
-	private ArrayList<String> authorizedNumbers;
+
 	private String monitorNumber;
 	
-	private static PhoneNumberManager instance;
 
 	public PhoneNumberManager() {
-
-		authorizedNumbers = new ArrayList<String>();
+		allObserved = new Vector<Observed>();
 	}
 	
-	public static PhoneNumberManager getInstance() {
-		if(null == instance)
-			instance = new PhoneNumberManager();
-		return instance;
-	}
+	
 	
 //	public static String getTargetPhonenumber() {
 //		return phonenumber;
 //	}
 	
-	public void addAuthorizedNumber(String authorizedNumber) {
-		this.authorizedNumbers.add(authorizedNumber);
+	public void setMe(Observed me) {
+		this.me = me;
+	}
+	public Observed getMe() {
+		return me;
 	}
 	
-	public ArrayList<String> getAuthorizedNumbers() {
-		return authorizedNumbers;
-	}
 	
 	public String getMonitorNumber() {
 		return monitorNumber;
@@ -41,6 +38,14 @@ public class PhoneNumberManager {
 	
 	public void setMonitorNumber(String monitorNumber) {
 		this.monitorNumber = monitorNumber;
+	}
+	
+	public Vector<Observed> getAllObserved() {
+		return allObserved;
+	}
+	
+	public void addObserved(Observed o){
+		allObserved.add(o);
 	}
 
 }

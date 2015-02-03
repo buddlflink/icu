@@ -11,14 +11,12 @@ import matze.gps.icu.model.Observed;
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.OverlayItem;
 
 import android.app.Fragment;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,15 +33,9 @@ public class MapFragment extends Fragment {
 
 	private MapController mapController;
 	private MapView mapView;
-	
+
 	static MapFragment fragment;
-	
-//	static OverlayItem itemUPosition;
-
-//	Drawable iDrawable;
-//	Drawable uDrawable;
-
-	private boolean drawme = true;
+	PhoneNumberManager phoneNumberManager;
 
 	ItemizedIconOverlay<OverlayItem> myLocationOverlay;
 	private Object resourceProxy;
@@ -57,8 +49,6 @@ public class MapFragment extends Fragment {
 	public static MapFragment newInstance() {
 		fragment = new MapFragment();
 		items = new ArrayList<OverlayItem>();
-		
-		
 
 		return fragment;
 	}
@@ -77,7 +67,9 @@ public class MapFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-		
+		if (null == phoneNumberManager) {
+			phoneNumberManager = ((MainActivity) getActivity()).getPhoneNumberManager();
+		}
 
 		mapView = (MapView) rootView.findViewById(R.id.map);
 		mapView.setTileSource(TileSourceFactory.MAPNIK);
@@ -85,16 +77,16 @@ public class MapFragment extends Fragment {
 		mapView.setMultiTouchControls(true);
 		mapController = (MapController) mapView.getController();
 		mapController.setZoom(16);
-//		GeoPoint pos = gpsLocationListener.getLastIPosition();
+		// GeoPoint pos = gpsLocationListener.getLastIPosition();
 
-//		mapController.setCenter(pos);
+		// mapController.setCenter(pos);
 
-//		resourceProxy = new DefaultResourceProxyImpl(((MainActivity) getActivity()).getApplicationContext());
+		resourceProxy = new DefaultResourceProxyImpl(((MainActivity) getActivity()).getApplicationContext());
 
-		
-
-//		iDrawable = getActivity().getResources().getDrawable(R.drawable.marker_i);
-//		iDrawable.setBounds(0, 0, iDrawable.getIntrinsicWidth(), iDrawable.getIntrinsicHeight());
+		// iDrawable =
+		// getActivity().getResources().getDrawable(R.drawable.marker_i);
+		// iDrawable.setBounds(0, 0, iDrawable.getIntrinsicWidth(),
+		// iDrawable.getIntrinsicHeight());
 
 		ToggleButton buttonhideMe = (ToggleButton) rootView.findViewById(R.id.toggleButtonHideMe);
 		buttonhideMe.setChecked(true);
@@ -104,7 +96,7 @@ public class MapFragment extends Fragment {
 			@Override
 			public void onClick(View view) {
 
-				drawme = ((ToggleButton) view).isChecked();
+				phoneNumberManager.getMe().setDraw(((ToggleButton) view).isChecked());
 				drawPositions();
 			}
 		});
@@ -118,8 +110,8 @@ public class MapFragment extends Fragment {
 				// StringBuilder sb = new
 				// StringBuilder(textViewNumber.getText());
 
-				if (null != PhoneNumberManager.getInstance().getMonitorNumber()) {
-					ICUSMS icuSMS = new ICUSMS(PhoneNumberManager.getInstance().getMonitorNumber(), getString(R.string.LOCATION_REQUEST), null, "");
+				if (null != phoneNumberManager.getMonitorNumber()) {
+					ICUSMS icuSMS = new ICUSMS(phoneNumberManager.getMonitorNumber(), getString(R.string.LOCATION_REQUEST), null, "");
 
 					icuSMS.send();
 				}
@@ -133,65 +125,67 @@ public class MapFragment extends Fragment {
 
 	public void drawPositions() {
 
-//		GeoPoint iPosition = gpsLocationListener.getLastIPosition();
-		
-
 		mapView.getOverlays().clear();
-//		items.clear();
 
-		
-		for(Observed o :  ((MainActivity)getActivity()).getAllObserved()){
-			if(null != o.getPosition() && o.isDraw() ){
+		for (Observed o : phoneNumberManager.getAllObserved()) {
+			if (null != o.getPosition() && o.isDraw()) {
 				mapView.getController().setCenter(o.getPosition());
 			}
-			
+
 		}
-		
-		
-		
-		
-		
+		Observed me = phoneNumberManager.getMe();
+
+		// hier weiter
+		if (me.getPosition() != null && me.isDraw()) {
+
+			// iPositionItem = new OverlayItem(iPositionItem.getTitle(),
+			// iPositionItem.getSnippet(), iPosition);
+			// iPositionItem.setMarker(iDrawable);
+			// items.add(iPositionItem);
+		}
+
 		// Draw my own position
-//		if (iPosition != null && drawme) {
-			
-//			iPositionItem = new OverlayItem(iPositionItem.getTitle(), iPositionItem.getSnippet(), iPosition);
-//			iPositionItem.setMarker(iDrawable);
-//			items.add(iPositionItem);
-//		}
+		// if (iPosition != null && drawme) {
+
+		// iPositionItem = new OverlayItem(iPositionItem.getTitle(),
+		// iPositionItem.getSnippet(), iPosition);
+		// iPositionItem.setMarker(iDrawable);
+		// items.add(iPositionItem);
+		// }
 
 		// Draw remote position
-//		if (uPosition != null) {
-//			mapView.getController().setCenter(uPosition);
-//
-//			itemUPosition = new OverlayItem(itemUPosition.getTitle(), itemUPosition.getSnippet(), uPosition);
-//			itemUPosition.setMarker(uDrawable);
-//			items.add(itemUPosition);
+		// if (uPosition != null) {
+		// mapView.getController().setCenter(uPosition);
+		//
+		// itemUPosition = new OverlayItem(itemUPosition.getTitle(),
+		// itemUPosition.getSnippet(), uPosition);
+		// itemUPosition.setMarker(uDrawable);
+		// items.add(itemUPosition);
 
-			// Drawable markerU =
-			// getResources().getDrawable(R.drawable.markerU);
-			// icon1.setBounds(0, 0, icon1.getIntrinsicWidth(),
-			// icon1.getIntrinsicHeight());
-			// OverlayItem item1 = new OverlayItem(new Point(48858290, 2294450),
-			// "Tour Eiffel", "La tour Eiffel");
-			// OverlayItem item2 = new OverlayItem(new Point(48873830, 2294800),
-			// "Arc de Triomphe", "L'arc de triomphe");
-			// item1.setMarker(icon1);
-			// item2.setMarker(icon2);
+		// Drawable markerU =
+		// getResources().getDrawable(R.drawable.markerU);
+		// icon1.setBounds(0, 0, icon1.getIntrinsicWidth(),
+		// icon1.getIntrinsicHeight());
+		// OverlayItem item1 = new OverlayItem(new Point(48858290, 2294450),
+		// "Tour Eiffel", "La tour Eiffel");
+		// OverlayItem item2 = new OverlayItem(new Point(48873830, 2294800),
+		// "Arc de Triomphe", "L'arc de triomphe");
+		// item1.setMarker(icon1);
+		// item2.setMarker(icon2);
 
-//		}
+		// }
 
 		myLocationOverlay = new ItemizedIconOverlay<OverlayItem>(items, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
 			@Override
 			public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
 
-				
-				for(Observed o: ((MainActivity)getActivity()).getAllObserved()){
-				
-					if(o.getiPositionItem() == item){
+				for (Observed o : phoneNumberManager.getAllObserved()) {
+
+					if (o.getiPositionItem() == item) {
 						Toast.makeText(getActivity().getApplicationContext(), "Bat: " + o.getBattery() + " %", Toast.LENGTH_SHORT).show();
 					}
 				}
-					
+
 				return true; // We 'handled' this event.
 			}
 
@@ -206,9 +200,9 @@ public class MapFragment extends Fragment {
 		mapView.invalidate();
 
 	}
-	
-	public  ArrayList<OverlayItem> getItems() {
+
+	public ArrayList<OverlayItem> getItems() {
 		return items;
 	}
-	
+
 }
