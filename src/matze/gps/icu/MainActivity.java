@@ -1,6 +1,6 @@
 package matze.gps.icu;
 
-import matze.gps.icu.control.PhoneNumberManager;
+import matze.gps.icu.control.ObserverManager;
 import matze.gps.icu.control.SMSManager;
 import matze.gps.icu.model.Observed;
 import matze.gps.icu.model.Requests;
@@ -43,7 +43,7 @@ public class MainActivity extends Activity {
 	private LocationManager locationManager;
 	
 
-	private PhoneNumberManager phoneNumberManager;
+	private ObserverManager observerManager;
 	private Settings settings;
 	private Observed me;
 
@@ -53,15 +53,16 @@ public class MainActivity extends Activity {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		mainActivity = this;
 
 		
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity.
 		sectionsPagerAdapter = new SectionsPagerAdapter(this, getFragmentManager());
-		phoneNumberManager = new PhoneNumberManager();
+		observerManager = new ObserverManager();
 		
-		settings = new Settings(this);
+		settings = new Settings();
 
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -70,9 +71,9 @@ public class MainActivity extends Activity {
 		
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-		me = new Observed(true, this, 'I');
+		me = new Observed(true, 'I', "me");
 		
-		phoneNumberManager.setMe(me);
+		observerManager.setMe(me);
 		
 		// locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
 		// 0, 0, gpsLocationListener);
@@ -81,13 +82,10 @@ public class MainActivity extends Activity {
 
 		registerReceiver(me, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
-		mainActivity = this;
+		
 		
 		registerReceiver(new SMSManager(),new IntentFilter("RECEIVED SMS"));
 		
-		
-		
-
 
 	}
 
@@ -126,8 +124,8 @@ public class MainActivity extends Activity {
 
 	
 
-	public PhoneNumberManager getPhoneNumberManager() {
-		return phoneNumberManager;
+	public ObserverManager getPhoneNumberManager() {
+		return observerManager;
 	}
 
 	public boolean isDebug() {

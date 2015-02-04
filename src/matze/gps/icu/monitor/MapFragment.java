@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import matze.gps.icu.MainActivity;
 import matze.gps.icu.R;
-import matze.gps.icu.control.PhoneNumberManager;
+import matze.gps.icu.control.ObserverManager;
 import matze.gps.icu.model.ICUSMS;
 import matze.gps.icu.model.Observed;
 
@@ -35,7 +35,7 @@ public class MapFragment extends Fragment {
 	private MapView mapView;
 
 	static MapFragment fragment;
-	PhoneNumberManager phoneNumberManager;
+	ObserverManager observerManager;
 
 	ItemizedIconOverlay<OverlayItem> myLocationOverlay;
 	private Object resourceProxy;
@@ -67,8 +67,8 @@ public class MapFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-		if (null == phoneNumberManager) {
-			phoneNumberManager = ((MainActivity) getActivity()).getPhoneNumberManager();
+		if (null == observerManager) {
+			observerManager = ((MainActivity) getActivity()).getPhoneNumberManager();
 		}
 
 		mapView = (MapView) rootView.findViewById(R.id.map);
@@ -96,7 +96,7 @@ public class MapFragment extends Fragment {
 			@Override
 			public void onClick(View view) {
 
-				phoneNumberManager.getMe().setDraw(((ToggleButton) view).isChecked());
+				observerManager.getMe().setDraw(((ToggleButton) view).isChecked());
 				drawPositions();
 			}
 		});
@@ -110,10 +110,11 @@ public class MapFragment extends Fragment {
 				// StringBuilder sb = new
 				// StringBuilder(textViewNumber.getText());
 
-				if (null != phoneNumberManager.getMonitorNumber()) {
-					ICUSMS icuSMS = new ICUSMS(phoneNumberManager.getMonitorNumber(), getString(R.string.LOCATION_REQUEST), null, "");
-
-					icuSMS.send();
+				for (Observed o : observerManager.getAllObserved()) {
+					if (!o.isMe()) {
+						ICUSMS icuSMS = new ICUSMS(o.getNumber(), getString(R.string.LOCATION_REQUEST), null, "");
+						icuSMS.send();
+					}
 				}
 			}
 		});
@@ -126,22 +127,26 @@ public class MapFragment extends Fragment {
 	public void drawPositions() {
 
 		mapView.getOverlays().clear();
+		items.clear();
 
-		for (Observed o : phoneNumberManager.getAllObserved()) {
+		// Set own position
+		Observed m = observerManager.getMe();
+		if (null != m.getPosition() && m.isDraw()) {
+			mapView.getController().setCenter(m.getPosition());
+			m.setOverlay(new OverlayItem(m.getNumber(), m.getNumber(), m.getPosition()));
+			m.getOverlay().setMarker(m.getDrawable());
+			items.add(m.getOverlay());
+		}
+
+		for (Observed o : observerManager.getAllObserved()) {
 			if (null != o.getPosition() && o.isDraw()) {
 				mapView.getController().setCenter(o.getPosition());
+
+				o.setOverlay(new OverlayItem(o.getNumber(), o.getNumber(), o.getPosition()));
+				o.getOverlay().setMarker(o.getDrawable());
+
+				items.add(o.getOverlay());
 			}
-
-		}
-		Observed me = phoneNumberManager.getMe();
-
-		// hier weiter
-		if (me.getPosition() != null && me.isDraw()) {
-
-			// iPositionItem = new OverlayItem(iPositionItem.getTitle(),
-			// iPositionItem.getSnippet(), iPosition);
-			// iPositionItem.setMarker(iDrawable);
-			// items.add(iPositionItem);
 		}
 
 		// Draw my own position
@@ -179,10 +184,11 @@ public class MapFragment extends Fragment {
 			@Override
 			public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
 
-				for (Observed o : phoneNumberManager.getAllObserved()) {
+				for (Observed o : observerManager.getAllObserved()) {
 
-					if (o.getiPositionItem() == item) {
+					if (o.getOverlay() == item) {
 						Toast.makeText(getActivity().getApplicationContext(), "Bat: " + o.getBattery() + " %", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getActivity().getApplicationContext(), "Num: " + o.getNumber() + " %", Toast.LENGTH_SHORT).show();
 					}
 				}
 

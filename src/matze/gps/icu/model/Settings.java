@@ -1,8 +1,11 @@
 package matze.gps.icu.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import matze.gps.icu.MainActivity;
 import matze.gps.icu.R;
-import matze.gps.icu.control.PhoneNumberManager;
+import matze.gps.icu.control.ObserverManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.WindowManager;
@@ -13,33 +16,29 @@ public class Settings {
 	private boolean displayAlwaysOn = false;
 	private static final String MONITORNUMBER = "monitorNumber";
 	private static final String DISPLAYALWAYSON = "displayAlwaysOn";
-	PhoneNumberManager phoneNumberManager;
+	ObserverManager observerManager;
 	
 
-	MainActivity mainActivity;
 
-	public Settings(MainActivity mainActivity) {
+	public Settings() {
 		
-		this.mainActivity = mainActivity;
-		SharedPreferences settings = mainActivity.getSharedPreferences(mainActivity.getString(R.string.PREFERENCES), Context.MODE_PRIVATE);
+		
+		SharedPreferences settings = MainActivity.getMainActivity().getSharedPreferences(MainActivity.getMainActivity().getString(R.string.PREFERENCES), Context.MODE_PRIVATE);
 
-		if (null == phoneNumberManager){
-			phoneNumberManager= mainActivity.getPhoneNumberManager();
+		if (null == observerManager){
+			observerManager= MainActivity.getMainActivity().getPhoneNumberManager();
 		}
 		
-		phoneNumberManager.setMonitorNumber(settings.getString(MONITORNUMBER, ""));
 		
-		String number = settings.getString(MONITORNUMBER, "");
-		boolean inList = false;
-		for (Observed o : phoneNumberManager.getAllObserved()) {
-			inList = inList || (o.getNumber().equals(number));
+		Set<String> s = new HashSet<>();
+		
+		s =  settings.getStringSet(MONITORNUMBER, s);
+		for(String n:s){
+			Observed other = new Observed(false, 'U',n);
+			observerManager.addObserved(other);
 		}
-
-		if (!inList) {
-			Observed other = new Observed(false, mainActivity, 'U');
-			phoneNumberManager.addObserved(other);
-
-		}
+		
+		
 		
 		
 
@@ -64,20 +63,29 @@ public class Settings {
 
 		// Display on
 		if (displayAlwaysOn)
-			mainActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			MainActivity.getMainActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		else
 			// Display off
-			mainActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			MainActivity.getMainActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	}
 
 	public void save() {
 
-		SharedPreferences settings = mainActivity.getSharedPreferences(mainActivity.getString(R.string.PREFERENCES), Context.MODE_PRIVATE);
+		SharedPreferences settings = MainActivity.getMainActivity().getSharedPreferences(MainActivity.getMainActivity().getString(R.string.PREFERENCES), Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 
-		editor.putString(MONITORNUMBER, phoneNumberManager.getMonitorNumber());
+		
+		HashSet<String> s = new HashSet<>();
+		for(Observed o: observerManager.getAllObserved()){
+			if(!o.isMe()){
+				s.add(o.getNumber());
+			}
+		}
+		
+		editor.putStringSet(MONITORNUMBER, s);
 		editor.putBoolean(DISPLAYALWAYSON, displayAlwaysOn);
 		editor.commit();
 	}
 
 }
+;

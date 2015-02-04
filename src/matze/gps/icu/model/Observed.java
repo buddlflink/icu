@@ -27,29 +27,42 @@ public class Observed extends BroadcastReceiver implements LocationListener {
 	private boolean me = false;
 	private ArrayList<GeoPoint> points;
 	private boolean draw = true;
-	private OverlayItem positionItem;
+	private OverlayItem overlay;
 	private char icon;
 	private Drawable drawable;
 	private String number = "";
 
-	MainActivity mainActivity;
+	// MainActivity mainActivity;
 
-	public Observed(boolean me, MainActivity mainActivity, char icon) {
+	public Observed(boolean me, char icon, String number) {
 		this.me = me;
-		this.mainActivity = mainActivity;
 		this.icon = icon;
+		this.number = number;
 
 		points = new ArrayList<GeoPoint>();
-		positionItem = new OverlayItem(Character.toString(icon), "", null);
-		
-		
-		
-		if (null != mainActivity.getSystemService(Context.LOCATION_SERVICE)
-				&& null != ((LocationManager) mainActivity.getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.GPS_PROVIDER)){
-			position =  new GeoPoint(((LocationManager) mainActivity.getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.GPS_PROVIDER));
-			points.add(position);
+
+		if (me) {
+			drawable = MainActivity.getMainActivity().getResources().getDrawable(R.drawable.marker_i);
+			if (null != MainActivity.getMainActivity().getSystemService(Context.LOCATION_SERVICE)
+					&& null != ((LocationManager) MainActivity.getMainActivity().getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.GPS_PROVIDER)) {
+				position = new GeoPoint(((LocationManager) MainActivity.getMainActivity().getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.GPS_PROVIDER));
+				points.add(position);
+			}
 		}
-			
+		else
+			drawable = MainActivity.getMainActivity().getResources().getDrawable(R.drawable.marker_u);
+
+		drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+
+		
+
+		TextView coords = ((TextView) MainActivity.getMainActivity().findViewById(R.id.textViewLocalCoord));
+		if (null != coords)
+			coords.setText("long " + position.getLongitude() + "\nlati " + position.getLatitude());
+
+		if (null != MapFragment.getFragment())
+			MapFragment.getFragment().drawPositions();
+
 	}
 
 	public String getBattery() {
@@ -71,47 +84,40 @@ public class Observed extends BroadcastReceiver implements LocationListener {
 	@Override
 	public void onLocationChanged(Location loc) {
 
-		if (me)
-			drawable = mainActivity.getResources().getDrawable(R.drawable.marker_i);
-		else
-			drawable = mainActivity.getResources().getDrawable(R.drawable.marker_u);
+		if (null == drawable)
+			if (me)
+				drawable = MainActivity.getMainActivity().getResources().getDrawable(R.drawable.marker_i);
+			else
+				drawable = MainActivity.getMainActivity().getResources().getDrawable(R.drawable.marker_u);
 
 		drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-		GeoPoint position = new GeoPoint(50.933464, 13.329889);
+//		GeoPoint position = new GeoPoint(50.933464, 13.329889);
 
 		if (null != loc)
 			position = new GeoPoint(loc.getLatitude(), loc.getLongitude());
 
-		
 		points.add(position);
-		this.position = position;
+//		this.position = position;
 
-		MapFragment.getFragment().getItems().remove(positionItem);
+		
 
-		positionItem = new OverlayItem(positionItem.getTitle(), positionItem.getSnippet(), position);
-
-		positionItem.setMarker(drawable);
-
-		MapFragment.getFragment().getItems().add(positionItem);
-
-		TextView coords = ((TextView) this.mainActivity.findViewById(R.id.textViewLocalCoord));
+		TextView coords = ((TextView) MainActivity.getMainActivity().findViewById(R.id.textViewLocalCoord));
 		if (null != coords)
 			coords.setText("long " + position.getLongitude() + "\nlati " + position.getLatitude());
 
 		if (null != MapFragment.getFragment())
 			MapFragment.getFragment().drawPositions();
-
 	}
 
 	@Override
 	public void onProviderDisabled(String arg0) {
-		Toast.makeText(this.mainActivity.getApplicationContext(), "GPS Disabled", Toast.LENGTH_SHORT).show();
+		Toast.makeText(MainActivity.getMainActivity().getApplicationContext(), "GPS Disabled", Toast.LENGTH_SHORT).show();
 
 	}
 
 	@Override
 	public void onProviderEnabled(String arg0) {
-		Toast.makeText(this.mainActivity.getApplicationContext(), "GPS Enabled", Toast.LENGTH_SHORT).show();
+		Toast.makeText(MainActivity.getMainActivity().getApplicationContext(), "GPS Enabled", Toast.LENGTH_SHORT).show();
 
 	}
 
@@ -129,28 +135,36 @@ public class Observed extends BroadcastReceiver implements LocationListener {
 		this.draw = draw;
 	}
 
-	public OverlayItem getiPositionItem() {
-		return positionItem;
+	public void setOverlay(OverlayItem overlay) {
+		this.overlay = overlay;
+	}
+
+	public OverlayItem getOverlay() {
+		return overlay;
 	}
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		// TODO Auto-generated method stub
 		int level = intent.getIntExtra("level", 0);
-		battery= Integer.toString(level);
-		
+		battery = Integer.toString(level);
+
 	}
 
 	public String getNumber() {
 		return number;
 	}
-	
+
 	public void setNumber(String number) {
 		this.number = number;
 	}
-	
+
 	public boolean isMe() {
 		return me;
 	}
-	
+
+	public Drawable getDrawable() {
+		return drawable;
+	}
+
 }

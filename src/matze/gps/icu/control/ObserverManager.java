@@ -4,17 +4,13 @@ import java.util.Vector;
 
 import matze.gps.icu.model.Observed;
 
-public class PhoneNumberManager {
+public class ObserverManager {
 	
 //	MainActivity mainActivity;
 	private Observed me;
 	private Vector<Observed> allObserved;
 
-
-	private String monitorNumber;
-	
-
-	public PhoneNumberManager() {
+	public ObserverManager() {
 		allObserved = new Vector<Observed>();
 	}
 	
@@ -32,13 +28,7 @@ public class PhoneNumberManager {
 	}
 	
 	
-	public String getMonitorNumber() {
-		return monitorNumber;
-	}
 	
-	public void setMonitorNumber(String monitorNumber) {
-		this.monitorNumber = monitorNumber;
-	}
 	
 	public Vector<Observed> getAllObserved() {
 		return allObserved;

@@ -2,7 +2,7 @@ package matze.gps.icu.monitor;
 
 import matze.gps.icu.MainActivity;
 import matze.gps.icu.R;
-import matze.gps.icu.control.PhoneNumberManager;
+import matze.gps.icu.control.ObserverManager;
 import matze.gps.icu.model.ICUSMS;
 import matze.gps.icu.model.Observed;
 import matze.gps.icu.model.Requests;
@@ -33,7 +33,7 @@ public class MainFragment extends Fragment {
 	// private static final String ARG_SECTION_NUMBER = "section_number";
 	TextView textViewNumber;
 	Settings settings = null;
-	PhoneNumberManager phoneNumberManager;
+	ObserverManager observerManager;
 
 	/**
 	 * Returns a new instance of this fragment for the given section number.
@@ -72,16 +72,16 @@ public class MainFragment extends Fragment {
 
 				
 				boolean inList = false;
-				for (Observed o : phoneNumberManager.getAllObserved()) {
+				for (Observed o : observerManager.getAllObserved()) {
 					inList = inList || (o.getNumber().equals(number));
 				}
 
 				if (!inList) {
-					phoneNumberManager.setMonitorNumber(number);
+					
 					textViewNumber.setText(number);
 
-					Observed other = new Observed(false, (MainActivity) getActivity(), 'U');
-					phoneNumberManager.addObserved(other);
+					Observed other = new Observed(false, 'U',number);
+					observerManager.addObserved(other);
 
 				}
 
@@ -93,8 +93,8 @@ public class MainFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-		if (null == phoneNumberManager){
-			phoneNumberManager= ((MainActivity)getActivity()).getPhoneNumberManager();
+		if (null == observerManager){
+			observerManager= ((MainActivity)getActivity()).getPhoneNumberManager();
 		}
 		
 		// (MainActivity) getActivity())
@@ -115,11 +115,13 @@ public class MainFragment extends Fragment {
 				// StringBuilder sb = new
 				// StringBuilder(textViewNumber.getText());
 
-				if (null != phoneNumberManager.getMonitorNumber()) {
-					ICUSMS icuSMS = new ICUSMS(phoneNumberManager.getMonitorNumber(), getString(R.string.LOCATION_REQUEST), null, "");
-
-					icuSMS.send();
+				for(Observed o: observerManager.getAllObserved()){
+					if(!o.isMe()){
+						ICUSMS icuSMS = new ICUSMS(o.getNumber(), getString(R.string.LOCATION_REQUEST), null, "");
+						icuSMS.send();
+					}
 				}
+				
 			}
 		});
 
@@ -147,10 +149,14 @@ public class MainFragment extends Fragment {
 
 		checkBoxDisplay.setChecked(settings.isDisplayAlwaysOn());
 
-		textViewNumber.setText(phoneNumberManager.getMonitorNumber());
-
+		// @todo: list of numbers
+		for(Observed o: observerManager.getAllObserved()){
+			if(!o.isMe()){
+				textViewNumber.setText(o.getNumber());
+			}
+		}
 		
-		localCoord.setText("last known: " + phoneNumberManager.getAllObserved().firstElement().getPosition());
+		localCoord.setText("last known: " + observerManager.getMe().getPosition());
 
 		return rootView;
 	}

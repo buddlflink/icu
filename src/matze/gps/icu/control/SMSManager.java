@@ -9,6 +9,7 @@ import matze.gps.icu.R;
 import matze.gps.icu.model.ICUSMS;
 import matze.gps.icu.model.Observed;
 import matze.gps.icu.model.Requests;
+import matze.gps.icu.monitor.MapFragment;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -27,12 +28,8 @@ public class SMSManager extends BroadcastReceiver{
 	
 	
 	private static final String SMS_EXTRA_NAME ="pdus";
-	private PhoneNumberManager phoneNumberManager;
+	private ObserverManager observerManager;
 	
-	
-
-	
-
 	
 
 	@Override
@@ -40,8 +37,8 @@ public class SMSManager extends BroadcastReceiver{
     {
         // Get the SMS map from Intent
         Bundle extras = intent.getExtras();
-        if (null == phoneNumberManager){
-			phoneNumberManager= MainActivity.getMainActivity().getPhoneNumberManager();
+        if (null == observerManager){
+			observerManager= MainActivity.getMainActivity().getPhoneNumberManager();
 		}
        
         if ( extras != null )
@@ -60,22 +57,18 @@ public class SMSManager extends BroadcastReceiver{
                 ICUSMS icuSMS = new ICUSMS();
                 icuSMS.parseSMS(body, sender);
                 
-                
-                
-                
-
         		String message = "";
         		if (icuSMS.getRequest().equals(Requests.LOCATION)) {
         			GeoPoint loc = icuSMS.getLocation();
         			message = icuSMS.getRequest() + "\nlong " + loc.getLongitude() + "\nlati " + loc.getLatitude();
         			
-        			for(Observed o: phoneNumberManager.getAllObserved()){
+        			for(Observed o: observerManager.getAllObserved()){
         				
         				Log.i("debug" , "receivedFrom " + icuSMS.getReceivedFrom());
         				Log.i("debug" , "o.getNumber() " + o.getNumber());
         				
         				if(!o.isMe() && 
-        						o.getNumber().equals(icuSMS.getReceivedFrom())){
+        						cleanNumber(o.getNumber()).equals(cleanNumber(icuSMS.getReceivedFrom()))){
         					o.setPosition(loc);
         					o.setBattery(icuSMS.getBattery());
         				}
@@ -93,7 +86,7 @@ public class SMSManager extends BroadcastReceiver{
         		
             }
             
-            MainActivity.getMainActivity().getM
+            MapFragment.getFragment().drawPositions();
             
             
             
@@ -101,5 +94,22 @@ public class SMSManager extends BroadcastReceiver{
         }
     }
 	
+	private String cleanNumber(String number) {
+		
+		number = number.replaceAll(" ", "");
+		if(number.startsWith("+")){
+			number=number.substring(3);
+		}
+		if(number.startsWith("00")){
+			number=number.substring(4);
+		}
+		
+		if(number.startsWith("0")){
+			number=number.substring(1);
+		}
+		
+		return number;
+
+	}
 	
 }
